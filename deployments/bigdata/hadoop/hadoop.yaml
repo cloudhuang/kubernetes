@@ -165,7 +165,8 @@ metadata:
 spec:
   clusterIP: None
   selector:
-    name: yarn-node
+    matchLabels:
+      name: yarn-node
   ports:
      - port: 8040
 ---
