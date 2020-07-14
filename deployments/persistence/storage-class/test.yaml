@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc-test
+spec:
+  storageClassName: managed-nfs-storage # SAME NAME AS THE STORAGECLASS
+  accessModes:
+    - ReadWriteMany #  must be the same as PersistentVolume
+  resources:
+    requests:
+      storage: 50Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vol-nfs-pod
+  labels:
+    app: redis
+spec:
+  containers:
+  - name: redis
+    image: redis:4-alpine
+    ports:
+    - containerPort: 6379
+      name: redisport
+    volumeMounts:
+    - mountPath: /data
+      name: redisdata
+  volumes:
+  - name: redisdata
+    persistentVolumeClaim:
+      claimName: nfs-pvc-test
