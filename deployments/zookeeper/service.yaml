@@ -1,0 +1,64 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: zoo1
+  namespace: zookeeper
+  labels:
+    app: zookeeper
+    node: node1
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-2181
+    port: 2181
+  - name: port-2888
+    port: 2888
+  - name: port-3888
+    port: 3888
+  selector:
+    app: zookeeper
+    node: node1
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: zoo2
+  namespace: zookeeper
+  labels:
+    app: zookeeper
+    node: node2
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-2181
+    port: 2181
+  - name: port-2888
+    port: 2888
+  - name: port-3888
+    port: 3888
+  selector:
+    app: zookeeper
+    node: node2
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: zoo3
+  namespace: zookeeper
+  labels:
+    app: zookeeper
+    node: node3
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-2181
+    port: 2181
+  - name: port-2888
+    port: 2888
+  - name: port-3888
+    port: 3888
+  selector:
+    app: zookeeper
+    node: node3
