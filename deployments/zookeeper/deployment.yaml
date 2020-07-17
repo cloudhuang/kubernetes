@@ -23,7 +23,7 @@ spec:
           - name: ZOO_MY_ID
             value: "1"
           - name: ZOO_SERVERS
-            value: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+            value: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2-svc:2888:3888;2181 server.3=zoo3-svc:2888:3888;2181
         ports:
         - containerPort: 2181
         - containerPort: 2888
@@ -54,7 +54,7 @@ spec:
           - name: ZOO_MY_ID
             value: "2"
           - name: ZOO_SERVERS
-            value: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+            value: server.1=zoo1-svc:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3-svc:2888:3888;2181
         ports:
         - containerPort: 2181
         - containerPort: 2888
@@ -85,7 +85,7 @@ spec:
           - name: ZOO_MY_ID
             value: "3"
           - name: ZOO_SERVERS
-            value: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+            value: server.1=zoo1-svc:2888:3888;2181 server.2=zoo2-svc:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
         ports:
         - containerPort: 2181
         - containerPort: 2888

@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: zoo1
+  name: zoo1-svc
   namespace: zookeeper
   labels:
     app: zookeeper
@@ -23,7 +23,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: zoo2
+  name: zoo2-svc
   namespace: zookeeper
   labels:
     app: zookeeper
@@ -45,7 +45,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: zoo3
+  name: zoo3-svc
   namespace: zookeeper
   labels:
     app: zookeeper
