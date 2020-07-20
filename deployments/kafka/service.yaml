@@ -1,0 +1,56 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka1-svc
+  namespace: kafka
+  labels:
+    app: kafka
+    node: node1
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-9092
+    port: 9092
+    targetPort: 9092
+  selector:
+    app: kafka
+    node: node1
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka2-svc
+  namespace: kafka
+  labels:
+    app: kafka
+    node: node2
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-9092
+    port: 9092
+    targetPort: 9092
+  selector:
+    app: kafka
+    node: node2
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka3-svc
+  namespace: kafka
+  labels:
+    app: kafka
+    node: node3
+spec:
+  type: LoadBalancer
+  ports:
+  - name: port-9092
+    port: 9092
+    targetPort: 9092
+  selector:
+    app: kafka
+    node: node3

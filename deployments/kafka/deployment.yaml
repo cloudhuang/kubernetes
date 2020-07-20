@@ -1,0 +1,118 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: kafka1
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+      node: node1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafka
+        node: node1
+    spec:
+      hostname: kafka-node1
+      containers:
+      - name: kafka
+        image: wurstmeister/kafka
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9092
+        env:
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: KAFKA_BROKER_ID
+            value: "1"
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: zoo1-svc:2181,zoo2-svc:2181,zoo3-svc:2181
+          - name: KAFKA_ADVERTISED_HOST_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+
+---
+
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: kafka2
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+      node: node2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafka
+        node: node2
+    spec:
+      hostname: kafka-node2
+      containers:
+      - name: kafka
+        image: wurstmeister/kafka
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9092
+        env:
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: KAFKA_BROKER_ID
+            value: "2"
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: zoo1-svc:2181,zoo2-svc:2181,zoo3-svc:2181
+          - name: KAFKA_ADVERTISED_HOST_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+
+---
+
+
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: kafka3
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+      node: node3
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafka
+        node: node3
+    spec:
+      hostname: kafka-node3
+      containers:
+      - name: kafka
+        image: wurstmeister/kafka
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9092
+        env:
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: KAFKA_BROKER_ID
+            value: "3"
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: zoo1-svc:2181,zoo2-svc:2181,zoo3-svc:2181
+          - name: KAFKA_ADVERTISED_HOST_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP

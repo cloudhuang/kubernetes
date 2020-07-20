@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zoo1
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+      node: node1
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        node: node1
+    spec: 
+      containers:
+      - name: zoo1
+        image: zookeeper
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ZOO_MY_ID
+            value: "1"
+          - name: ZOO_SERVERS
+            value: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2-svc:2888:3888;2181 server.3=zoo3-svc:2888:3888;2181
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zoo2
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+      node: node2
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        node: node2
+    spec: 
+      containers:
+      - name: zoo2
+        image: zookeeper
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ZOO_MY_ID
+            value: "2"
+          - name: ZOO_SERVERS
+            value: server.1=zoo1-svc:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3-svc:2888:3888;2181
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zoo3
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+      node: node3
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        node: node3
+    spec: 
+      containers:
+      - name: zoo3
+        image: zookeeper
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ZOO_MY_ID
+            value: "3"
+          - name: ZOO_SERVERS
+            value: server.1=zoo1-svc:2888:3888;2181 server.2=zoo2-svc:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888

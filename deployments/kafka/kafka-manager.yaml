@@ -1,0 +1,38 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: kafka-manager
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka-manager
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: kafka-manager
+    spec:
+      containers:
+      - name: kafka-manager
+        image: kafkamanager/kafka-manager
+        ports:
+        - containerPort: 9000
+        env:
+        - name: ZK_HOSTS
+          value: zoo1-svc:2181, zoo2-svc:2181, zoo3-svc:2181
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-manager-svc
+  labels:
+    app: kafka-manager
+spec:
+  ports:
+  - port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: kafka-manager
+  type: LoadBalancer  
