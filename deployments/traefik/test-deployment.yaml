@@ -1,0 +1,86 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: PathPrefix(`/foo`)
+    kind: Rule
+    services:
+    - name: foo-svc
+      port: 80
+  - match: PathPrefix(`/bar`)
+    kind: Rule
+    services:
+    - name: bar-svc
+      port: 80
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: foo-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 5678
+  selector:
+    app: foo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo
+spec:
+  selector:
+    matchLabels:
+      app: foo
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: foo
+    spec:
+      containers:
+      - name: foo
+        image: hashicorp/http-echo
+        args:
+        - "-text=foo service"
+        ports:
+        - containerPort: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bar-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 5678
+  selector:
+    app: bar
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bar
+spec:
+  selector:
+    matchLabels:
+      app: bar
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: bar
+    spec:
+      containers:
+      - name: bar
+        image: hashicorp/http-echo
+        args:
+        - "-text=bar service"
+        ports:
+        - containerPort: 5678
