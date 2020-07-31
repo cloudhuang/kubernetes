@@ -49,3 +49,7 @@ Problem:
 如果用pod ip的话，客户端通过Service IP又无法链接到Pod
 
 使用domain的方式?
+
+> the network architecture of kafka is pretty poor regarding to this topic. The new consumer uses a list of brokers, which return the host of the zookeeper, but unfortunately this is in a different network, so it is not possible to reach it from your local client. The poor part of kafka is, that is not possible to specify the brokers AND the zookeeper servers. This prevents clients accessing the system from outside.
+
+from https://stackoverflow.com/a/41869856/1128953

@@ -10,6 +10,9 @@ spec:
       name: web
       port: 80
     - protocol: TCP
+      name: mysql
+      port: 3306  
+    - protocol: TCP
       name: admin
       port: 8080
     - protocol: TCP

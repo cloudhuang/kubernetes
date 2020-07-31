@@ -32,6 +32,7 @@ spec:
             - --accesslog
             - --entrypoints.web.Address=:80
             - --entrypoints.websecure.Address=:443
+            - --entrypoints.mysql.Address=:3306
             - --providers.kubernetescrd
             - --certificatesresolvers.myresolver.acme.tlschallenge
             - --certificatesresolvers.myresolver.acme.email=foo@you.com
@@ -42,6 +43,8 @@ spec:
           ports:
             - name: web
               containerPort: 80
+            - name: mysql
+              containerPort: 3306  
             - name: websecure
               containerPort: 443
             - name: admin
