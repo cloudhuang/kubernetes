@@ -67,3 +67,15 @@ with username `ubuntu` and password `123456`
   - Ansible 执行操作的最小单位。 ad-hoc 更适合临时执行命令的执行场景。
 - Playbooks 任务剧本
   - Playbooks 是任务列表的组合，通常会把常用的命令列表通过正确的语法写入到 playbook中。 Playbook 可以像普通 tasks 一样调用变量， 其使用 YAML 语法，便于读、写、分享、理解。
+
+### Ansible Roles
+
+**folder structures description**
+
+- **`defaults`**: This directory lets you set default variables for included or dependent roles. Any defaults set here can be overridden in playbooks or inventory files.
+- **`files`**: This directory contains static files and script files that might be copied to or executed on a remote server.
+- **`handlers`**: All handlers that were in your playbook previously can now be added into this directory.
+- **`meta`**: This directory is reserved for role metadata, typically used for dependency management.. For example, you can define a list of roles that must be applied before the current role is invoked.
+- **`templates`**: This directory is reserved for templates that will generate files on remote hosts. Templates typically use variables defined on files located in the `vars` directory, and on host information that is collected at runtime.
+- **`tasks`**: This directory contains one or more files with tasks that would normally be defined in the `tasks` section of a regular Ansible playbook. These tasks can directly reference files and templates contained in their respective directories within the role, without the need to provide a full path to the file.
+- **`vars`**: Variables for a role can be specified in files inside this directory and then referenced elsewhere in a role.
