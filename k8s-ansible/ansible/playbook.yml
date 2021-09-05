@@ -5,4 +5,10 @@
   roles:
     - common
     - docker
-    - kubernetes
+    - kubernetes/install
+
+- name: Initalize Kubernetes master server
+  hosts: master
+  become: yes
+  roles:
+    - kubernetes/master

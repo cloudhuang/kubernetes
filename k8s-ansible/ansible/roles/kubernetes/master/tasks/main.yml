@@ -1,0 +1,11 @@
+---
+- name: Initialize the Kubernetes cluster using kubeadm
+  become: yes
+  shell: |
+    kubeadm init \
+      --apiserver-advertise-address="192.168.33.2" \
+      --apiserver-cert-extra-sans="192.168.33.2"  \
+      --node-name k8s-master --pod-network-cidr=192.168.0.0/16 \
+      --image-repository registry.aliyuncs.com/google_containers \
+      --kubernetes-version 1.21.0
+
