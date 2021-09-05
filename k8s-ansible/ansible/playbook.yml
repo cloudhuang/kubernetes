@@ -1,7 +1,7 @@
 ---
-- name: Install Kubernate
+- name: Install Kubernates
   hosts: all
-  become: true
+  become: yes
   roles:
     - common
     - docker

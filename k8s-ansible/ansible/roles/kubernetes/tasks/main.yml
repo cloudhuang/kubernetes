@@ -1,4 +1,9 @@
 ---
+- name: Add aliyun kubernetes apt key
+  apt_key:
+    url: https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg
+    state: present
+
 - name: Adding apt repository for Kubernetes
   apt_repository:
     repo: deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
