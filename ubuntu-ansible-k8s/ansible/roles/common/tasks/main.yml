@@ -1,0 +1,41 @@
+---
+- name: Update and upgrade apt packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Install Dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - apt-transport-https 
+      - ca-certificates 
+      - curl 
+      - software-properties-common
+
+- name: Set time zone to Asia/Shanghai
+  timezone:
+    name: Asia/Shanghai
+ 
+# sudo apt-get install ntp
+- name: Install ntp
+  apt:
+    name: ntp
+    state: present
+    update_cache: yes

@@ -1,0 +1,14 @@
+---
+- name: Install Kubernates
+  hosts: all
+  become: yes
+  roles:
+    - common
+    - docker
+    - kubernetes/install
+
+- name: Initalize Kubernetes master server
+  hosts: master
+  become: yes
+  roles:
+    - kubernetes/master

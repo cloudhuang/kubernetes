@@ -1,0 +1,101 @@
+---
+- name: add Docker repo
+  get_url:
+    url: https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+  become: yes
+- name: install Docker
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - docker-ce
+    - docker-ce-cli 
+    - containerd.io
+
+- name: setup docker daemon
+  shell: |
+    mkdir -p /etc/docker
+    cat > /etc/docker/daemon.json <<EOF
+    {
+      "exec-opts": ["native.cgroupdriver=systemd"],
+      "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "100m"
+      },
+      "registry-mirrors" : [
+        "https://docker.mirrors.ustc.edu.cn",
+        "http://hub-mirror.c.163.com"
+      ],
+      "storage-driver": "overlay2"
+    }
+    EOF
+
+- name: start Docker
+  service:
+    name: docker
+    state: started
+
+- name: enable docker service
+  shell: |
+    systemctl enable docker.service
+    systemctl restart docker.service
+
+- name: disable SELinux
+  command: setenforce 0
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Disable swap
+  command: swapoff -a
+
+- name: disable SELinux on reboot
+  selinux:
+    state: disabled
+
+- name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+
+- name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- name: add Kubernetes' YUM repository
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes YUM repository
+    baseurl: http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+    gpgkey: http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+
+- name: install kubelet
+  yum:
+    name: kubelet-1.20.0
+    state: present
+    update_cache: true
+
+- name: install kubeadm
+  yum:
+    name: kubeadm-1.20.0
+    state: present
+
+- name: start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
+
+- name: detect docker's cgroup-driver
+  shell: docker info 2>/dev/null |grep -i cgroup | cut -d":" -f2 | tr -d " "
+  register: docker_cgroup_driver
+  
