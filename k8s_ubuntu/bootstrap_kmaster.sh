@@ -1,21 +1,18 @@
 #!/bin/bash
 
-# Initialize Kubernetes
-echo "[TASK 1] Initialize Kubernetes Cluster"
-kubeadm init --apiserver-advertise-address=172.42.42.100 --pod-network-cidr=192.168.0.0/16 --image-repository=registry.aliyuncs.com/google_containers
+echo "[TASK 1] Pull required containers"
+kubeadm config images pull --kubernetes-version v1.20.8 --image-repository=registry.aliyuncs.com/google_containers >/dev/null 2>&1
 
-# Copy Kube admin config
-echo "[TASK 2] Copy kube admin config to Vagrant user .kube directory"
+echo "[TASK 2] Initialize Kubernetes Cluster"
+kubeadm init --apiserver-advertise-address=172.16.16.100 --pod-network-cidr=192.168.0.0/16 --kubernetes-version=v1.20.8 --image-repository=registry.aliyuncs.com/google_containers >> /root/kubeinit.log 2>/dev/null
+
+echo "[TASK 3] Deploy Calico network"
+kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://docs.projectcalico.org/v3.18/manifests/calico.yaml >/dev/null 2>&1
+
+echo "[TASK 4] Copy config file"
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-sleep 10s
-
-# Deploy flannel network
-echo "[TASK 3] Deploy Calico network"
-kubectl create -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml
-
-# Generate Cluster join command
-echo "[TASK 4] Generate and save cluster join command to /joincluster.sh"
-kubeadm token create --print-join-command > /joincluster.sh
+echo "[TASK 5] Generate and save cluster join command to /joincluster.sh"
+kubeadm token create --print-join-command > /joincluster.sh 2>/dev/null
