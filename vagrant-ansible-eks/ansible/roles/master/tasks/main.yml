@@ -1,0 +1,48 @@
+---
+# tasks file for master
+- name: pull required docker images
+  shell: |
+    docker pull public.ecr.aws/eks-distro/kubernetes/pause:v1.19.8-eks-1-19-4
+    docker pull public.ecr.aws/eks-distro/coredns/coredns:v1.8.0-eks-1-19-4
+    docker pull public.ecr.aws/eks-distro/etcd-io/etcd:v3.4.14-eks-1-19-4
+    docker tag public.ecr.aws/eks-distro/kubernetes/pause:v1.19.8-eks-1-19-4 public.ecr.aws/eks-distro/kubernetes/pause:3.2
+    docker tag public.ecr.aws/eks-distro/coredns/coredns:v1.8.0-eks-1-19-4 public.ecr.aws/eks-distro/kubernetes/coredns:1.7.0
+    docker tag public.ecr.aws/eks-distro/etcd-io/etcd:v3.4.14-eks-1-19-4 public.ecr.aws/eks-distro/kubernetes/etcd:3.4.13-0
+
+- name: create /etc/modules-load.d/k8s.conf file
+  shell: |
+    mddir -p /etc/modules-load.d/
+    echo br_netfilter > /etc/modules-load.d/k8s.conf
+
+- name: create /etc/sysctl.d/99-k8s.conf file
+  shell: |
+    mkdir -p /etc/sysctl.d/
+    echo net.bridge.bridge-nf-call-iptables = 1 > /etc/sysctl.d/99-k8s.conf
+
+- name: Initialize the Kubernetes cluster using kubeadm
+  shell: |
+    kubeadm init \
+      --apiserver-advertise-address="172.42.42.101" \
+      --apiserver-cert-extra-sans="172.42.42.101"  \
+      --image-repository public.ecr.aws/eks-distro/kubernetes \
+      --node-name k8s-master \
+      --pod-network-cidr=10.244.0.0/16 \
+      --kubernetes-version v1.19.8-eks-1-19-4
+
+- name: Setup kubeconfig for vagrant user
+  command: "{{ item }}"
+  with_items:
+    - mkdir -p $HOME/.kube
+    - cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    - chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Install Weaveworks pod network
+  become: false
+  command: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=v1.19.8-eks-1-19-4"
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
