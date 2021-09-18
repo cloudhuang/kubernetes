@@ -17,9 +17,9 @@
     update_cache: yes
   vars:
     packages:
-      - kubelet
-      - kubeadm
-      - kubectl
+      - kubelet=1.20.0-00
+      - kubeadm=1.20.0-00
+      - kubectl=1.20.0-00
 
 - name: Restart kubelet
   service:

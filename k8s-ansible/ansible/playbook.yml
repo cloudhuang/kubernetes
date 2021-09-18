@@ -12,3 +12,9 @@
   become: yes
   roles:
     - kubernetes/master
+
+- name: Join to kubernetes cluster
+  hosts: worker
+  become: yes
+  roles:
+    - kubernetes/worker

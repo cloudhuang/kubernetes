@@ -1,4 +1,8 @@
 ---
+- name: Pull required kubernetes images
+  shell: |
+    kubeadm config images pull --kubernetes-version v1.20.8 --image-repository=registry.aliyuncs.com/google_containers >/dev/null 2>&1
+
 - name: Initialize the Kubernetes cluster using kubeadm
   become: yes
   shell: |
@@ -7,5 +11,22 @@
       --apiserver-cert-extra-sans="192.168.33.2"  \
       --node-name k8s-master --pod-network-cidr=192.168.0.0/16 \
       --image-repository registry.aliyuncs.com/google_containers \
-      --kubernetes-version 1.21.0
+      --kubernetes-version v1.20.8
 
+- name: Copy kube config
+  shell: |
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Install Weaveworks pod network
+  become: false
+  command: kubectl apply -f "https://docs.projectcalico.org/v3.18/manifests/calico.yaml"
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: worker_join_command
+
+- name: Copy join command to local file
+  local_action: copy content="{{ worker_join_command.stdout_lines[0] }}" dest="/tmp/worker-join-command" 
+  
