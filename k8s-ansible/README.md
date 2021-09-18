@@ -1,34 +1,39 @@
-Multipass + Ansible => Kubernetes
+Vagrant + Ansible => Kubernetes
 ==============================================
-
-
-
 
 ## Purpose
 provision the kubernetes servers by using asnible
 
 ### Servers
-- node1 192.168.0.126
-- node2 192.168.0.127
-- node3 192.168.0.128
+- 192.168.33.2 master
+- 192.168.33.3 worker
+- 192.168.33.4 worker
 
-with username `ubuntu` and password `123456`
+with username `vagrant` and password `vagrant`
 
 ## Steps
 - Provision servers
-- Step1: Install ansible
-- Step2: Hello World
-  - config ssh
+- Step1: Using ansible
+  - cd ansible
+  - `ansible -i hosts -m ping all -uroot -k`
+  - using `ansible-playbook -i hosts playbook.yml -uroot -k` to initialize the kubernetes cluster
+  - using `ansible-playbook -i hosts worker-join-playbook.yml -uroot -k` to join the worker nodes
+
+
+## Tests
+- Deploy nginx to cluster
+  - `kubectl create deploy nginx --image=nginx`
+  - `kubectl expose deploy nginx --port 80 --type NodePort`
+  
     ```
+    root@node1:/home/vagrant# kubectl get svc
     
+    NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+    kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        3h39m
+    nginx        NodePort    10.96.157.45   <none>        80:31421/TCP   6s
     ```
-  - Where to store the ansible `hosts` file
-    - While Ansible will try /etc/ansible/hosts by default, there are several ways to tell ansible where to look for an alternate inventory file:
-      - use the `-i` command line switch and pass your inventory file path
-      - add `inventory = path_to_hostfile` in the `[defaults]` section of your ~/.ansible.cfg configuration file
-      - use `export ANSIBLE_HOSTS=path_to_hostfile` 
 
-
+    visit url: http://192.168.33.2:31421
 
 **Notes**
 
@@ -49,11 +54,7 @@ with username `ubuntu` and password `123456`
     ```
 
   - in `ansible.cfg`
-
-    
-
-
-
+ 
 ## Concepts
 - 管理机
   - 任何安装了 Ansbile 的服务器，你都可以使用 ansible or ansible-playbook 命令
