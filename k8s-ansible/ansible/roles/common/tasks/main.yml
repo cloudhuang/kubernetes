@@ -4,18 +4,16 @@
     update_cache: yes
     cache_valid_time: 86400 #One day
 
-- name: Remove swapfile from /etc/fstab
-  mount:
-    name: "{{ item }}"
-    fstype: swap
-    state: absent
-  with_items:
-    - swap
-    - none
-
 - name: Disable swap
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
+
+- name: Remove swapfile from /etc/fstab
+  shell: |
+    sudo rm /swapfile
+    #back up /etc/fstab:
+    sudo cp /etc/fstab /etc/fstab.bak
+    sudo sed -i '/\/swapfile/d' /etc/fstab
 
 - name: Install Dependencies
   apt:
@@ -30,8 +28,7 @@
       - software-properties-common
 
 - name: Set time zone to Asia/Shanghai
-  timezone:
-    name: Asia/Shanghai
+  command: timedatectl set-timezone Asia/Shanghai
  
 # sudo apt-get install ntp
 - name: Install ntp

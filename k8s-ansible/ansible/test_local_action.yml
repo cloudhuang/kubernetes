@@ -1,0 +1,19 @@
+- name: Test Local Action
+  hosts: master
+  tasks:
+  - name: hostname
+    command: hostname
+    register: master_hostname_output
+  
+  - name: Master Hostname
+    debug: 
+      msg: "{{ master_hostname_output.stdout }}"
+      
+  - name: hostname deletage
+    command: hostname
+    delegate_to: localhost
+    register: localhost_hostname_output
+
+  - name: Master Hostname
+    debug: 
+      msg: "{{ localhost_hostname_output.stdout }}"

@@ -37,6 +37,7 @@ with username `vagrant` and password `vagrant`
 
 **Notes**
 
+
 - How to using the `ansible.cfg` in current folder
 
   - `export ANSIBLE_CONFIG=<PATH_TO_FILE>`
@@ -55,6 +56,13 @@ with username `vagrant` and password `vagrant`
 
   - in `ansible.cfg`
  
+### Buibld ansible docker image
+
+```
+  docker build -t ubuntu-ansible:latest .
+  docker run --it --network host -v ${PWD}:/ansible ubuntu-ansible /bin/bash 
+```
+
 ## Concepts
 - 管理机
   - 任何安装了 Ansbile 的服务器，你都可以使用 ansible or ansible-playbook 命令
