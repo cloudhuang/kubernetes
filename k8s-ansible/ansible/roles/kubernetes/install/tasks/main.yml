@@ -26,3 +26,8 @@
     name: kubelet
     daemon_reload: yes
     state: restarted
+
+- name: Eanble kubelet service
+  service: 
+    name: kubelet
+    enabled: yes

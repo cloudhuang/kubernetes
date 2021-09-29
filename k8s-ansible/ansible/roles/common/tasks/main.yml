@@ -6,14 +6,12 @@
 
 - name: Disable swap
   command: swapoff -a
-  when: ansible_swaptotal_mb > 0
 
 - name: Remove swapfile from /etc/fstab
-  shell: |
-    sudo rm /swapfile
-    #back up /etc/fstab:
-    sudo cp /etc/fstab /etc/fstab.bak
-    sudo sed -i '/\/swapfile/d' /etc/fstab
+  lineinfile:
+    dest: /etc/fstab
+    regexp: ".*swap"
+    line: ""
 
 - name: Install Dependencies
   apt:

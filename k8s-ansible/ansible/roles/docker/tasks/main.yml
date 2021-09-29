@@ -19,3 +19,25 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+
+- name: Config docker daemon
+  shell: |
+    cat > /etc/docker/daemon.json <<EOF
+    {
+      "exec-opts": ["native.cgroupdriver=systemd"],
+      "registry-mirrors" : [
+        "https://docker.mirrors.ustc.edu.cn",
+        "http://hub-mirror.c.163.com"
+      ],
+      "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "100m"
+      },
+      "storage-driver": "overlay2"
+    }  
+    EOF
+- name: Restart docker
+  service:
+    name: docker
+    daemon_reload: yes
+    state: restarted  
