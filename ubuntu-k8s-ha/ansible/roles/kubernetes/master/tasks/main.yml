@@ -1,0 +1,24 @@
+---
+- name: Pull kubernetes images
+  command: kubeadm config images pull --image-repository registry.aliyuncs.com/google_containers --kubernetes-version v1.22.2
+
+- name: Initialize the Kubernetes cluster using kubeadm
+  shell: |
+    kubeadm init \
+      --control-plane-endpoint="172.16.16.100:6443" \
+      --upload-certs \
+      --apiserver-advertise-address="172.16.16.101" \
+      --apiserver-cert-extra-sans="172.16.16.101"  \
+      --pod-network-cidr=10.244.0.0/16 \
+      --image-repository registry.aliyuncs.com/google_containers \
+      --kubernetes-version v1.22.2
+
+- name: Setup kubeconfig for user
+  shell: |
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Install flannel pod network
+  command: kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+ 

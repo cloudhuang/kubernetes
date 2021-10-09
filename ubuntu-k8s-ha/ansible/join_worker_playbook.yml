@@ -1,0 +1,36 @@
+# Add worker to cluster
+- name: Generate worker join command
+  become: yes
+  hosts:
+    - master
+  tasks:
+    - name: generate join command for worker
+      command: kubeadm token create --print-join-command
+      register: worker_join_command
+
+- name: Copy join command to local file
+  become: no
+  hosts:
+    - master
+  tasks:
+    - name: copy join command
+      local_action: copy content="{{ worker_join_command.stdout_lines[0] }}" dest="./worker-join-command"
+
+- name: Copy the join command to server location
+  become: yes
+  hosts:
+    - worker
+  tasks:
+    - name: copy join command to worker node
+      copy:
+        src: ./worker-join-command
+        dest: /tmp/worker-join-command.sh
+        mode: 0777
+
+- name: Join the node to cluster
+  become: yes
+  hosts:
+    - worker
+  tasks:
+    - name: execute join command
+      command: sh /tmp/worker-join-command.sh

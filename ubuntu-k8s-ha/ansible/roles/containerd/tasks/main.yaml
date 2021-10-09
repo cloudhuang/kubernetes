@@ -1,0 +1,53 @@
+---
+- name: Enable and Load Kernel modules
+  copy:
+    dest: /etc/modules-load.d/containerd.conf
+    content: |
+      overlay
+      br_netfilter
+
+- name: Ensure overlay is enabled.
+  modprobe:
+    name: overlay
+    state: present
+
+- name: Ensure br_netfilter is enabled.
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+
+- name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- name: ensure net.ipv4.ip_forward is set to 1
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+
+- name: Install containerd
+  apt:
+    name: containerd
+    state: present
+
+- name: Config containerd
+  command: containerd config default > /etc/containerd/config.toml
+
+- name: Enable containerd
+  service:
+    name: containerd
+    enabled: yes
+
+- name: Restart containerd
+  service:
+    name: containerd
+    state: restarted

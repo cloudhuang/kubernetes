@@ -1,0 +1,1 @@
+kubeadm join 172.16.16.100:6443 --token 60k5nx.pvjsianvgvj618gi --discovery-token-ca-cert-hash sha256:86d68ba835d0eee3172eb8c290e7dc7f22a13b4a04bf95844cebb09a0b92a07a 

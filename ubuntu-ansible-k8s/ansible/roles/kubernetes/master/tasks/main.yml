@@ -2,7 +2,6 @@
 - name: Initialize the Kubernetes cluster using kubeadm
   become: yes
   shell: |
-    kubeadm reset -f
     kubeadm init \
       --apiserver-advertise-address="192.168.0.126" \
       --apiserver-cert-extra-sans="192.168.0.126"  \

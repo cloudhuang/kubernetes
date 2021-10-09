@@ -1,0 +1,44 @@
+---
+- name: Set HA Kubernetes
+  hosts: all
+  become: yes
+  roles:
+    - common
+
+- name: Setup loadbalancer
+  hosts: loadbalancer
+  become: yes
+  roles:
+    - keepalived
+    - haproxy
+
+- name: Install containerd
+  hosts:
+    - master
+    - slave
+    - worker
+  become: yes
+  roles:
+    - containerd
+
+- name: Install kubernetes
+  hosts:
+    - master
+    - slave
+    - worker
+  become: yes
+  roles:
+    - kubernetes/install
+
+- name: Initialize kubernetes master
+  hosts:
+    - master
+  become: yes
+  roles:
+    - kubernetes/master
+
+- name: Join master slave node
+  include: join_master_playbook.yml
+
+- name: Join worker node
+  include: join_worker_playbook.yml
